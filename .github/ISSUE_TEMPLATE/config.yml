@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Upstream source (chasey-dev/immortalwrt-mt798x-rebase)
+    url: https://github.com/chasey-dev/immortalwrt-mt798x-rebase/issues
+    about: Bugs in the ImmortalWrt MT798x source tree itself belong here.
+  - name: ImmortalWrt
+    url: https://github.com/immortalwrt/immortalwrt/issues
+    about: Bugs in stock ImmortalWrt components belong here.

@@ -1,0 +1,26 @@
+#
+# MT7981 (Filogic 820) boards. Concatenated onto devices/common/config by
+# prepare-build.sh.
+#
+# Boards ship in several flash-layout variants, and the images are NOT
+# interchangeable — pick the one matching the bootloader you run:
+#   (no suffix)  vendor/stock layout, or the board's only layout
+#   -stock       stock layout, first flash from vendor firmware
+#   -ubootmod    OpenWrt U-Boot layout (wide-spread u-boot mod)
+#   -mtkuboot    MTK U-Boot layout (mtk u-boot web UI flashes factory.bin)
+#
+# Add more mt7981 boards by appending their CONFIG_TARGET_DEVICE_... lines
+# (profile ids are in the source tree's target/linux/mediatek/image/filogic*.mk).
+#
+
+CONFIG_TARGET_MULTI_PROFILE=y
+CONFIG_TARGET_PER_DEVICE_ROOTFS=y
+
+CONFIG_TARGET_DEVICE_mediatek_filogic_DEVICE_cmcc_rax3000m=y
+
+CONFIG_TARGET_DEVICE_mediatek_filogic_DEVICE_xiaomi_mi-router-wr30u-stock=y
+CONFIG_TARGET_DEVICE_mediatek_filogic_DEVICE_xiaomi_mi-router-wr30u-ubootmod=y
+CONFIG_TARGET_DEVICE_mediatek_filogic_DEVICE_xiaomi_mi-router-wr30u-mtkuboot=y
+
+CONFIG_TARGET_DEVICE_mediatek_filogic_DEVICE_h3c_magic-nx30-pro=y
+CONFIG_TARGET_DEVICE_mediatek_filogic_DEVICE_h3c_magic-nx30-pro-mtkuboot=y

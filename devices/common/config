@@ -1,0 +1,72 @@
+#
+# Build config shared by every device group in this repo — HNAT offload,
+# toolchain and package selection; everything that does not depend on which
+# SoC group is being built.
+#
+# prepare-build.sh concatenates this with devices/<group>/config (that file
+# wins on any symbol set in both) and runs `make defconfig`.
+#
+
+## Target Platform
+CONFIG_TARGET_mediatek=y
+CONFIG_TARGET_mediatek_filogic=y
+
+# Keep initramfs images: on these NAND boards the *-recovery.itb /
+# initramfs-factory.ubi artifacts are the recovery path via U-Boot's web UI.
+
+## Compiler and Toolchain Optimization
+CONFIG_BINUTILS_USE_VERSION_2_45=y
+CONFIG_DEVEL=y
+CONFIG_GCC_USE_VERSION_15=y
+CONFIG_TARGET_OPTIMIZATION="-O2 -pipe -mcpu=cortex-a53+crc+crypto"
+CONFIG_TARGET_OPTIONS=y
+CONFIG_TOOLCHAINOPTS=y
+CONFIG_USE_GC_SECTIONS=y
+CONFIG_USE_LTO=y
+CONFIG_USE_MOLD=y
+CONFIG_ZLIB_OPTIMIZE_SPEED=y
+# CONFIG_CCACHE is not set
+
+## Hardening build options
+CONFIG_GCC_DEFAULT_PIE=y
+CONFIG_GCC_DEFAULT_SSP=y
+CONFIG_PKG_CHECK_FORMAT_SECURITY=y
+CONFIG_PKG_ASLR_PIE_ALL=y
+CONFIG_PKG_CC_STACKPROTECTOR_ALL=y
+CONFIG_KERNEL_CC_STACKPROTECTOR_STRONG=y
+CONFIG_PKG_FORTIFY_SOURCE_3=y
+CONFIG_PKG_RELRO_FULL=y
+CONFIG_USE_SECCOMP=y
+
+## MTK HNAT hardware offload (PPE). The kernel side (NET_MEDIATEK_HNAT) is
+## flipped on in the workflow, not here: it is not an OpenWrt-level
+## CONFIG_KERNEL_* symbol, so defconfig would silently drop it. See
+## .github/workflows/build.yml.
+##
+## Runtime pieces ride along from the tree's defaults: hnat-detect (auto
+## enable/disable around firewall reloads), mtk-smp (IRQ/RPS affinity) and
+## l1util are in the filogic target's DEFAULT_PACKAGES.
+##
+## Multicast routing so the PPE can offload IPTV/IGMP flows when configured.
+CONFIG_KERNEL_IP_MROUTE=y
+CONFIG_KERNEL_IPV6_MROUTE=y
+
+## LuCI + web UI over HTTPS
+CONFIG_PACKAGE_luci=y
+CONFIG_PACKAGE_luci-ssl=y
+CONFIG_PACKAGE_luci-app-firewall=y
+CONFIG_PACKAGE_luci-i18n-base-zh-cn=y
+CONFIG_PACKAGE_luci-i18n-firewall-zh-cn=y
+
+## SQM (cake). Works together with HNAT: hnat-detect watches the firewall and
+## keeps offload coherent; shape to ~90-95% of line rate before enabling.
+CONFIG_PACKAGE_luci-app-sqm=y
+CONFIG_PACKAGE_luci-i18n-sqm-zh-cn=y
+
+## BCP38 anti-spoofing on WAN (enabled by the uci-defaults overlay).
+CONFIG_PACKAGE_luci-app-bcp38=y
+CONFIG_PACKAGE_luci-i18n-bcp38-zh-cn=y
+
+## Diagnostics and utilities
+CONFIG_PACKAGE_curl=y
+CONFIG_PACKAGE_htop=y
