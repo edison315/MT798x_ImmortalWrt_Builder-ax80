@@ -163,6 +163,11 @@ jobs:
           fetch-depth: 0
           path: openwrt
 
+      - name: Checkout builder repo
+        uses: actions/checkout@v7
+        with:
+          path: builder
+
       - name: Restore mt76 (revert upstream 7e234e4615)
         working-directory: openwrt
         run: |
@@ -187,11 +192,11 @@ jobs:
           fi
           test -f package/kernel/mt76/Makefile
           grep -q '^Package/mt7986-wo-firmware' "$mk"
-
-      - name: Checkout builder repo
-        uses: actions/checkout@v7
-        with:
-          path: builder
+          # The tree's MediaTek WED series changes struct mtk_wed_device
+          # (wpdma_tx becomes an array); patch mt76 to match. The image
+          # also ships /etc/modules.d/mt7915e with wed_enable=N (device
+          # overlay), so mt76 never attaches to the MediaTek WED at runtime.
+          cp "$GITHUB_WORKSPACE"/builder/patches/mt76/*.patch package/kernel/mt76/patches/
 
       - name: Enable MTK HNAT in the kernel config
         working-directory: openwrt
