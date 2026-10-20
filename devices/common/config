@@ -55,18 +55,14 @@ CONFIG_KERNEL_IPV6_MROUTE=y
 CONFIG_PACKAGE_luci=y
 CONFIG_PACKAGE_luci-ssl=y
 CONFIG_PACKAGE_luci-app-firewall=y
-CONFIG_PACKAGE_luci-i18n-base-zh-cn=y
-CONFIG_PACKAGE_luci-i18n-firewall-zh-cn=y
+CONFIG_PACKAGE_luci-i18n-base-ja=y
+CONFIG_PACKAGE_luci-i18n-firewall-ja=y
 
-## SQM (cake). Works together with HNAT: hnat-detect watches the firewall and
-## keeps offload coherent; shape to ~90-95% of line rate before enabling.
-CONFIG_PACKAGE_luci-app-sqm=y
-CONFIG_PACKAGE_luci-i18n-sqm-zh-cn=y
-
-## BCP38 anti-spoofing on WAN (enabled by the uci-defaults overlay).
-CONFIG_PACKAGE_luci-app-bcp38=y
-CONFIG_PACKAGE_luci-i18n-bcp38-zh-cn=y
+## IPv6 / MAP-E (OCN Virtual Connect): map package + LuCI protocol support.
+CONFIG_PACKAGE_map=y
+CONFIG_PACKAGE_luci-proto-ipv6=y
 
 ## Diagnostics and utilities
 CONFIG_PACKAGE_curl=y
 CONFIG_PACKAGE_htop=y
+CONFIG_PACKAGE_iperf3=y

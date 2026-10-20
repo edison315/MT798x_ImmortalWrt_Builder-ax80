@@ -11,8 +11,6 @@ on:
       - 'devices/**'
       - 'scripts/**'
       - '.github/workflows/build.yml'
-  schedule:
-    - cron: "0 */2 * * *"
 
 concurrency:
   group: build-${{ github.ref }}
@@ -140,7 +138,7 @@ jobs:
         # One entry per devices/<name>/ directory. Groups split by SoC because
         # kernel-level options (NETSYS V2/V3, HNAT) are image-wide, so boards
         # can only share a build when they share a kernel config.
-        device: [mt7981, mt7986]
+        device: [mt7986]
     env:
       GH_TOKEN: ${{ github.token }}
       DEVICE: ${{ matrix.device }}
@@ -235,6 +233,7 @@ jobs:
           # image".
           mapfile -t assets < <(find "$out" -maxdepth 1 -type f \( \
             -name '*-squashfs-sysupgrade.*' -o \
+            -name '*-initramfs-kernel.bin' -o \
             -name '*-squashfs-factory.*' -o \
             -name '*-factory.ubi' -o \
             -name '*-recovery.itb' -o \

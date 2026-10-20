@@ -11,11 +11,6 @@ uci -q batch << EOI
 # Firewall settings
 set firewall.@zone[1].input='DROP'
 
-# Network settings (BCP38 anti-spoofing on WAN). @bcp38[0] is the package's
-# anonymous default section; unlike its generated cfg hash it is stable.
-set bcp38.@bcp38[0].enabled='1'
-set bcp38.@bcp38[0].interface='wan'
-
 # NTP: serve time locally (sysntpd) and advertise this router to LAN clients
 # via DHCP option 42 (which carries IP addresses, not hostnames). The address
 # is derived from the live LAN config, not hardcoded.

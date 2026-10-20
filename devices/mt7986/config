@@ -1,10 +1,12 @@
 #
 # MT7986 (Filogic 830) boards. Concatenated onto devices/common/config by
-# prepare-build.sh. See devices/mt7981/config for the flash-layout variants.
+# prepare-build.sh.
+#
+# TP-Link Archer AX80 v1 (EU variant: MT7986B + MT7975/mt76). Stock U-Boot
+# layout only; the sysupgrade tar goes into the ubi0 slot.
 #
 
 CONFIG_TARGET_MULTI_PROFILE=y
 CONFIG_TARGET_PER_DEVICE_ROOTFS=y
 
-CONFIG_TARGET_DEVICE_mediatek_filogic_DEVICE_netcore_n60-pro=y
-CONFIG_TARGET_DEVICE_mediatek_filogic_DEVICE_netcore_n60-pro-mtkuboot=y
+CONFIG_TARGET_DEVICE_mediatek_filogic_DEVICE_tplink_archer-ax80-v1-eu=y
