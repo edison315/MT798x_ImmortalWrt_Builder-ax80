@@ -163,6 +163,31 @@ jobs:
           fetch-depth: 0
           path: openwrt
 
+      - name: Restore mt76 (revert upstream 7e234e4615)
+        working-directory: openwrt
+        run: |
+          set -euo pipefail
+          # chasey-dev 25.12 dropped mt76 and mt7986-wo-firmware (commit
+          # 7e234e4615, "may interfere with the hnat and mtwifi build"). The
+          # Archer AX80 image definition is mainline-derived and needs
+          # kmod-mt7915e + kmod-mt7986-firmware + mt7986-wo-firmware, and this
+          # build carries no mt_wifi, so put them back. The checkout above
+          # has the full history (fetch-depth: 0), so revert in place; fall
+          # back to restoring the files from the parent commit if the revert
+          # no longer applies cleanly.
+          rev=7e234e4615
+          mk=package/firmware/linux-firmware/mediatek.mk
+          if ! git -c user.name=builder -c user.email=builder@localhost \
+              revert --no-edit "$rev"; then
+            git revert --abort || true
+            git checkout "$rev^" -- package/kernel/mt76
+            git show "$rev^:$mk" \
+              | sed -n '/^Package\/mt7986-wo-firmware/,/^\$(eval.*mt7986-wo-firmware))/p' \
+              >> "$mk"
+          fi
+          test -f package/kernel/mt76/Makefile
+          grep -q '^Package/mt7986-wo-firmware' "$mk"
+
       - name: Checkout builder repo
         uses: actions/checkout@v7
         with:
@@ -218,7 +243,9 @@ jobs:
         working-directory: openwrt
         run: |
           set -euo pipefail
-          make -j"$(nproc)"
+          # Parallel first; on failure rerun single-threaded and verbose so
+          # the failing package is visible in the log.
+          make -j"$(nproc)" || make -j1 V=s
 
       - name: Upload images
         run: |
