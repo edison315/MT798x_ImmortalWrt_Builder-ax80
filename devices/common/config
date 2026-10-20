@@ -55,8 +55,6 @@ CONFIG_KERNEL_IPV6_MROUTE=y
 CONFIG_PACKAGE_luci=y
 CONFIG_PACKAGE_luci-ssl=y
 CONFIG_PACKAGE_luci-app-firewall=y
-CONFIG_PACKAGE_luci-i18n-base-ja=y
-CONFIG_PACKAGE_luci-i18n-firewall-ja=y
 
 ## IPv6 / MAP-E (OCN Virtual Connect): map package + LuCI protocol support.
 CONFIG_PACKAGE_map=y
