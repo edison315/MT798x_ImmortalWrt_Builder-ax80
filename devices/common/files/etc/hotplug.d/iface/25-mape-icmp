@@ -1,0 +1,19 @@
+#!/bin/sh
+# fw4 は map.sh が要求する ICMP 用 SNAT（ポート範囲付き）を捨てるため、
+# wanmap の ifup 後に TCP 用 SNAT 規則から MAP-E のアドレスとポート範囲を読み、
+# ICMP の ID を同じ範囲に収める規則を /etc/nftables.d に生成する。
+[ "$ACTION" = ifup ] && [ "$INTERFACE" = wanmap ] || exit 0
+f=/etc/nftables.d/20-mape-icmp.nft
+set -- $(nft list chain inet fw4 srcnat 2>/dev/null \
+	| awk '/l4proto tcp oifname "map-wanmap"/ && /snat ip to/ {for (i = 1; i <= NF; i++) if ($i == "to") {print $(i + 1); exit}}' \
+	| tr ':' ' ')
+[ -n "$2" ] || exit 0
+new="chain mape_icmp_snat {
+	type nat hook postrouting priority srcnat - 1; policy accept;
+	meta nfproto ipv4 meta l4proto icmp oifname \"map-wanmap\" snat ip to $1:$2
+}"
+[ "$(cat "$f" 2>/dev/null)" = "$new" ] && exit 0
+echo "$new" > "$f"
+logger -t mape-icmp "icmp snat $1:$2"
+fw4 reload
+exit 0
