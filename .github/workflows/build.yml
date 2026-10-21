@@ -11,6 +11,10 @@ on:
       - 'devices/**'
       - 'scripts/**'
       - '.github/workflows/build.yml'
+  # Weekly: Sunday 18:00 UTC = Monday 03:00 JST. scripts/check-updates.sh
+  # skips the build when the latest release already carries the upstream SHA.
+  schedule:
+    - cron: "0 18 * * 0"
 
 concurrency:
   group: build-${{ github.ref }}
