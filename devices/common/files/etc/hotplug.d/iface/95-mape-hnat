@@ -1,0 +1,4 @@
+#!/bin/sh
+# wanmap（MAP-E）が上がったら HNAT の MAP-E 処理を有効化する
+[ "$ACTION" = ifup ] && [ "$INTERFACE" = wanmap ] && echo 1 > /sys/kernel/debug/hnat/mape_toggle
+exit 0

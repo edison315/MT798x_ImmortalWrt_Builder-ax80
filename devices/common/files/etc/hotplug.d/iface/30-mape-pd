@@ -1,0 +1,21 @@
+#!/bin/sh
+# OCN バーチャルコネクトは prefix delegation が無く RA の /64 だけ来るので、
+# wan6 の /64 を MAP-E ルール（network.wanmap.rule）の pd に反映する。
+[ "$INTERFACE" = wan6 ] || exit 0
+case "$ACTION" in ifup|ifupdate) ;; *) exit 0 ;; esac
+
+. /usr/share/libubox/jshn.sh
+json_load "$(ifstatus wan6)" 2>/dev/null || exit 0
+json_get_var dev l3_device
+[ -n "$dev" ] || exit 0
+pd=$(ip -6 route show dev "$dev" | awk '$1 ~ /\/64$/ && $1 !~ /^fe80/ {sub(/\/64$/, "", $1); print $1; exit}')
+[ -n "$pd" ] || exit 0
+
+g() { uci -q get "network.wanmap.$1"; }
+rule="type=map-e,ipv6prefix=$(g ip6prefix),prefix6len=$(g ip6prefixlen),ipv4prefix=$(g ipaddr),prefix4len=$(g ip4prefixlen),ealen=$(g ealen),psidlen=$(g psidlen),offset=$(g offset),br=$(g peeraddr),pd=$pd,pdlen=64"
+[ "$(g rule)" = "$rule" ] && exit 0
+uci set network.wanmap.rule="$rule"
+uci commit network
+logger -t mape-pd "wanmap rule pd=$pd"
+[ "$(g disabled)" = 1 ] || ifup wanmap
+exit 0
