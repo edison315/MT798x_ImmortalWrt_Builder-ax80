@@ -186,6 +186,7 @@ jobs:
               revert --no-edit "$rev"; then
             git revert --abort || true
             git checkout "$rev^" -- package/kernel/mt76
+            # shellcheck disable=SC2016  # the $(eval ...) in the sed range is a literal Makefile line
             git show "$rev^:$mk" \
               | sed -n '/^Package\/mt7986-wo-firmware/,/^\$(eval.*mt7986-wo-firmware))/p' \
               >> "$mk"
