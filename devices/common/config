@@ -65,6 +65,14 @@ CONFIG_PACKAGE_luci-app-firewall=y
 CONFIG_PACKAGE_map=y
 CONFIG_PACKAGE_luci-proto-ipv6=y
 
+## DNS ad blocking (adblock-fast + LuCI). gawk/grep/sed/coreutils-sort are its recommended helpers.
+CONFIG_PACKAGE_adblock-fast=y
+CONFIG_PACKAGE_luci-app-adblock-fast=y
+CONFIG_PACKAGE_gawk=y
+CONFIG_PACKAGE_grep=y
+CONFIG_PACKAGE_sed=y
+CONFIG_PACKAGE_coreutils-sort=y
+
 ## Diagnostics and utilities
 CONFIG_PACKAGE_curl=y
 CONFIG_PACKAGE_htop=y
