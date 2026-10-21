@@ -38,10 +38,15 @@ CONFIG_PKG_FORTIFY_SOURCE_3=y
 CONFIG_PKG_RELRO_FULL=y
 CONFIG_USE_SECCOMP=y
 
-## MTK HNAT hardware offload (PPE). The kernel side (NET_MEDIATEK_HNAT) is
-## flipped on in the workflow, not here: it is not an OpenWrt-level
-## CONFIG_KERNEL_* symbol, so defconfig would silently drop it. See
-## .github/workflows/build.yml.
+## MTK HNAT hardware offload (PPE). The tree packages the driver as
+## kmod-mediatek_hnat (KCONFIG NET_MEDIATEK_HNAT=m, installs mtkhnat.ko).
+## Flipping the subtarget kernel config to =y does not survive: the kernel
+## config generator forces the KCONFIG symbols of unselected kmods off, so
+## the module has to be selected here. It has no AUTOLOAD; the overlay
+## files/etc/modules.d/90-mtkhnat loads it at boot (hook_toggle defaults
+## to 1 in the driver). hnat-detect (DEFAULT_PACKAGES) then registers the
+## wan/lan netdevs on ifup.
+CONFIG_PACKAGE_kmod-mediatek_hnat=y
 ##
 ## Runtime pieces ride along from the tree's defaults: hnat-detect (auto
 ## enable/disable around firewall reloads), mtk-smp (IRQ/RPS affinity) and

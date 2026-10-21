@@ -198,24 +198,6 @@ jobs:
           # overlay), so mt76 never attaches to the MediaTek WED at runtime.
           cp "$GITHUB_WORKSPACE"/builder/patches/mt76/*.patch package/kernel/mt76/patches/
 
-      - name: Enable MTK HNAT in the kernel config
-        working-directory: openwrt
-        run: |
-          set -euo pipefail
-          # NET_MEDIATEK_HNAT is added by the tree's mtkhnat patch series and
-          # ships disabled in the subtarget kernel config. It is not an
-          # OpenWrt-level CONFIG_KERNEL_* symbol (config/Config-kernel.in),
-          # so .config cannot carry it - defconfig would drop it and
-          # prepare-build.sh's verification would (correctly) fail. Flip it
-          # in the subtarget config instead; a glob, so a kernel bump still
-          # works, and grep-guarded so a surprise fails loudly.
-          cfg=""
-          for f in target/linux/mediatek/filogic/config-*; do cfg="$f"; break; done
-          [[ -n "$cfg" ]] || { echo "::error::no filogic kernel config found"; exit 1; }
-          sed -i 's/^# CONFIG_NET_MEDIATEK_HNAT is not set$/CONFIG_NET_MEDIATEK_HNAT=y/' "$cfg"
-          grep -q '^CONFIG_NET_MEDIATEK_HNAT=y$' "$cfg" || {
-            echo "::error::could not enable NET_MEDIATEK_HNAT in $cfg"; exit 1; }
-
       - name: Prepare build environment
         env:
           OPENWRT_DIR: ${{ github.workspace }}/openwrt
