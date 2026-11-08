@@ -50,10 +50,12 @@ up_sha="$(resolve_sha "$UPSTREAM_REPO" "$UPSTREAM_REF")"
 latest_body() {
   local prefix="$1"
   [[ -n "$REPO" ]] || return 0
+  # Sorted by published_at: a release's created_at is the date of the tagged
+  # commit, so every release cut from the same builder commit ties on it.
   # Anchored on the tag's timestamp field, so the prefix of one series does
   # not also match another's.
   gh api "repos/$REPO/releases" --jq \
-    "[.[] | select(.draft|not) | select(.tag_name | test(\"^${prefix}-[0-9]{8}T[0-9]{6}Z-\"))] | sort_by(.created_at) | reverse | .[0].body // \"\"" \
+    "[.[] | select(.draft|not) | select(.tag_name | test(\"^${prefix}-[0-9]{8}T[0-9]{6}Z-\"))] | sort_by(.published_at) | reverse | .[0].body // \"\"" \
     2>/dev/null || printf '%s' ""
 }
 
